@@ -1,0 +1,70 @@
+<html>
+    <head>
+    <script>
+        function Parser(text) {
+
+            this.text = text;
+            var cursor = 0;
+
+            this.getNext = function() {
+                var token;
+                var nextCursor = this.text.indexOf(' ', cursor);
+                if (nextCursor === -1) {
+                  token = this.text.substr(cursor);
+                  cursor = this.text.length;
+                } else {
+                  token = this.text.substr(cursor, nextCursor - cursor);
+                  cursor = nextCursor + 1;
+                }
+                return token;
+            };
+
+            this.hasNext = function() {
+                return cursor < this.text.length - 1;
+            };
+
+        }
+
+    function run() {
+        document.getElementById('setup-area').style.display = 'none';
+        var parser = new Parser(document.getElementById('input-text').value);
+        var span = document.getElementById('target');
+        var loops = 0;
+        var token;
+        var interval = 1000.0 / parseFloat(document.getElementById('speed').value, 10);
+        var offset = interval;
+        var offsetSum = 0;
+        while (parser.hasNext() && loops < 5000) {
+            token = parser.getNext();
+
+            (function(ownToken) {
+                setTimeout(function() {
+                    span.innerText = ownToken;
+                }, loops * interval + offsetSum);
+            })(token);
+            loops++;
+
+            if (token.endsWith('.')) {
+                offsetSum += offset;
+            }
+        }
+    }
+
+    </script>
+    </head>
+    <body>
+        <div id='setup-area'>
+            Words per second: <input type='text' id='speed' value='5' />
+            <br />
+            <textarea rows="20" cols="100" id="input-text"></textarea>
+            <br />
+            <button onclick="run()">Read</button>
+        </div>
+        <div style="width: 100%; text-align: center; margin: 100px auto">
+            <span style="font-family: helvetica, verdana, arial; size: 12px" id='target'></span>
+        </div>
+    </body>
+    <script>
+
+</script>
+</html>
